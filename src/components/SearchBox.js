@@ -6,7 +6,7 @@ const SearchBox = (props) => {
             <input type="text" value={props.value} onChange={(e) => props.setMovieQuery(e.target.value)} placeholder='Search movies' />
             <div className="autocomplete-list">
                 {props.movieSuggest.map((movie, index) => (
-                    <div>
+                    <div id={movie.id} onClick={(e) => props.handleMovieSelect(e.target.id)}>
                         {movie.title}
                     </div>
                 ))}

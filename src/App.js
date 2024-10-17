@@ -22,6 +22,7 @@ function App() {
   const [movieQuery, setMovieQuery] = useState('');
   const [movieSuggest, setMovieSuggest] = useState([]);
   const [movieResults, setMovieResults] = useState([]);
+  const [addedFromSearch, setAddedFromSearch] = useState([]);
   const [language, setLanguage] = useState('en-US');
   const [searchBtn, setSearchBtn] = useState(false);
 
@@ -40,6 +41,16 @@ function App() {
     fetch(url, options)
     .then(response => response.json())
     .then(response => setMovieSuggest(response.results))
+    .catch(err => console.error(err));
+  }
+
+  //Fetch Movie By ID
+  const fetchMovieByID = (id) => {
+    const prev = [...addedFromSearch]
+
+    fetch(`https://api.themoviedb.org/3/movie/${id}`, options)
+    .then(response => response.json())
+    .then(response => setAddedFromSearch([...prev,response]))
     .catch(err => console.error(err));
   }
 
@@ -76,6 +87,10 @@ function App() {
     setMovies(res);
   }
 
+  const handleMovieSelect = (e) => {
+    fetchMovieByID(e);
+  }
+
   useEffect(() => {
     fetchMovies();
   }, [movieQuery])
@@ -87,7 +102,7 @@ function App() {
   return (
     <div className="App">
       <MovieListHeading heading='Movies' />
-      <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} />
+      <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} handleMovieSelect={handleMovieSelect} />
       <form onSubmit={handleSearch}>
         <div className='movieListHolder'>    
           <input type="file" accept="text/txt" id="moviesTxt" onChange={handleFileUpload} />
