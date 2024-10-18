@@ -27,14 +27,15 @@ function App() {
   const [searchBtn, setSearchBtn] = useState(false);
 
   const url = `https://api.themoviedb.org/3/search/movie?query=${movieQuery}&language=${language}`;
+  const fetchedMovieData = [];
 
   //Fetch Movies
-  const fetchMovies = () => {   
-    fetch(url, options)
-    .then(response => response.json())
-    .then(response => setMovies(response.results))
-    .catch(err => console.error(err));
-  }
+  // const fetchMovies = () => {   
+  //   fetch(url, options)
+  //   .then(response => response.json())
+  //   .then(response => setMovies(response.results))
+  //   .catch(err => console.error(err));
+  // }
 
   //Fetch MovieSuggestions
   const fetchMovieSuggestions = () => {   
@@ -54,7 +55,16 @@ function App() {
     .catch(err => console.error(err));
   }
 
-  const showSearch = () => (searchBtn ? <input type='submit' value='Search' onSubmit={handleSearch} /> : '')
+  const getMovieData = (movieName) => {  
+    fetch(`https://api.themoviedb.org/3/search/movie?query=${movieName}&language=${language}`, options)
+    .then(response => response.json())
+    .then(response => fetchedMovieData.push(response.results[0]))
+    .catch(err => console.error(err));
+  
+    console.log(fetchedMovieData);
+  }
+
+  const showSearch = () => (searchBtn ? <input type='button' value='Search' onClick={handleSearch} /> : '')
 
   const handleFileUpload = (e) => {
     let reader = new FileReader();
@@ -70,15 +80,20 @@ function App() {
     }
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    let movieSearch = [];
-    const formData = new FormData(e.target);
-    const data = formData.entries();
-    for (const entry of data) movieSearch = [...movieSearch, entry[0]];
+  const handleSelect = (e) => {
+    const movieIndex = e.target.id.slice(6);
+    console.log(movieIndex);
+  }
+
+  const handleSearch = () => {
+    let movieSearch = movieList;
+    // const formData = new FormData(e.target);
+    // const data = formData.entries();
+    // for (const entry of data) movieSearch = [...movieSearch, entry[0]];
+
     console.log(movieSearch);
-    //for (const entry of data) console.log(entry[0]);
-    const results = Promise.all(movieSearch.map())
+    movieSearch.map((movieName) => getMovieData(movieName));
+    setMovies(fetchedMovieData);
   }
 
   const handleDelete = (e) => {
@@ -91,9 +106,9 @@ function App() {
     fetchMovieByID(e);
   }
 
-  useEffect(() => {
-    fetchMovies();
-  }, [movieQuery])
+  // useEffect(() => {
+  //   fetchMovies();
+  // }, [movieQuery])
 
   useEffect(() => {
     fetchMovieSuggestions();
@@ -103,11 +118,11 @@ function App() {
     <div className="App">
       <MovieListHeading heading='Movies' />
       <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} handleMovieSelect={handleMovieSelect} />
-      <form onSubmit={handleSearch}>
+      <form>
         <div className='movieListHolder'>    
           <input type="file" accept="text/txt" id="moviesTxt" onChange={handleFileUpload} />
 
-          <MovieList movies={movieList} />
+          <MovieList movies={movieList} handleSelect={handleSelect} />
 
           {showSearch()}
         </div>
