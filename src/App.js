@@ -15,29 +15,29 @@ function App() {
   };
 
   let readFile = [];
+  let fetchedMovieData = [];
+  let movieSearch = [];
   
   // State
   const [movies, setMovies] = useState([]);
   const [movieList, setMovieList] = useState([]);
   const [movieQuery, setMovieQuery] = useState('');
   const [movieSuggest, setMovieSuggest] = useState([]);
-  const [movieResults, setMovieResults] = useState([]);
   const [addedFromSearch, setAddedFromSearch] = useState([]);
   const [language, setLanguage] = useState('en-US');
   const [searchBtn, setSearchBtn] = useState(false);
+  const [saveBtn, setSaveBtn] = useState(false);
+  const [searchField, setSearchField] = useState(false);
 
   const url = `https://api.themoviedb.org/3/search/movie?query=${movieQuery}&language=${language}`;
-  const fetchedMovieData = [];
 
-  //Fetch Movies
-  // const fetchMovies = () => {   
-  //   fetch(url, options)
-  //   .then(response => response.json())
-  //   .then(response => setMovies(response.results))
-  //   .catch(err => console.error(err));
-  // }
+  const showSearch = () => (searchBtn ? <input type='submit' value='Search' /> : '')
+  const showSave = () => (saveBtn ? <input type='button' value='Save' onClick={sendMovies} /> : '')
+  const showSearchField = () => (
+    searchField ? <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} handleMovieSelect={handleMovieSelect} /> : ''
+  )
 
-  //Fetch MovieSuggestions
+  //Fetch Movie Suggestions
   const fetchMovieSuggestions = () => {   
     fetch(url, options)
     .then(response => response.json())
@@ -47,7 +47,7 @@ function App() {
 
   //Fetch Movie By ID
   const fetchMovieByID = (id) => {
-    const prev = [...addedFromSearch]
+    const prev = [...addedFromSearch];
 
     fetch(`https://api.themoviedb.org/3/movie/${id}`, options)
     .then(response => response.json())
@@ -55,18 +55,32 @@ function App() {
     .catch(err => console.error(err));
   }
 
-  const getMovieData = (movieName) => {  
+  //Fetch Movie Data
+  const getMovieData = (movieName) => {
     fetch(`https://api.themoviedb.org/3/search/movie?query=${movieName}&language=${language}`, options)
     .then(response => response.json())
     .then(response => fetchedMovieData.push(response.results[0]))
     .catch(err => console.error(err));
-  
-    console.log(fetchedMovieData);
   }
 
-  const showSearch = () => (searchBtn ? <input type='submit' value='Search' onSubmit={handleSearch} /> : '')
+  //Send Movies
+  const sendMovies = () => {
+    const moviesFinal = [...movies, ...addedFromSearch];
+    
+    fetch('https://mydummyadress.com/movies', {
+      method: 'POST',
+      body: JSON.stringify(moviesFinal),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
+    .then(alert('Successfully sent movie data!'));
+  }
 
+  //Handle File Upload
   const handleFileUpload = (e) => {
+    setSearchField(false);
+    setSaveBtn(false);
     let reader = new FileReader();
     let uploadedFiles = e.target.files;
     let uploadedFile = uploadedFiles[0];
@@ -74,38 +88,52 @@ function App() {
     reader.readAsText(uploadedFile);
     reader.onload = (e) => {
       readFile = reader.result.split('\r\n');
-      console.log(readFile);
       setMovieList(readFile);
       setSearchBtn(true);
     }
   }
 
+  //Handle Search
   const handleSearch = (e) => {
     e.preventDefault();
-    let movieSearch = [];
     const formData = new FormData(e.target);
     const data = formData.entries();
     for (const entry of data) movieSearch = [...movieSearch, entry[0]];
 
-    console.log(movieSearch);
-    movieSearch.map((movieName) => getMovieData(movieName));
-    setMovies(fetchedMovieData);
+    movieSearch.map((title) => getMovieData(title));
+    setTimeout(() => {
+      setMovies(fetchedMovieData);
+    }, 500);
+
+    setSaveBtn(true);
+    setSearchField(true);
   }
 
+  //Handle Movie Delete From movies State
   const handleDelete = (e) => {
     let res = Array.from(movies);
     res.splice(e,1);
     setMovies(res);
   }
 
+  //Handle Movie Delete From addedFromSearch State
+  const handleDeleteFromSearch = (e) => {
+    let res = Array.from(addedFromSearch);
+    res.splice(e,1);
+    setAddedFromSearch(res);
+  }
+
+  //Handle Movie Select
   const handleMovieSelect = (e) => {
     fetchMovieByID(e);
   }
+  
+  //Hide Search Button Based on saveBtn State Change
+  useEffect(() => {
+    setSearchBtn(false);
+  }, [saveBtn])
 
-  // useEffect(() => {
-  //   fetchMovies();
-  // }, [movieQuery])
-
+  //Fetch Movie Suggestions Based on movieQuery State Change
   useEffect(() => {
     fetchMovieSuggestions();
   }, [movieQuery])
@@ -113,19 +141,22 @@ function App() {
   return (
     <div className="App">
       <MovieListHeading heading='Movies' />
-      <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} handleMovieSelect={handleMovieSelect} />
+      {showSearchField()}
       <form onSubmit={handleSearch}>
         <div className='movieListHolder'>    
           <input type="file" accept="text/txt" id="moviesTxt" onChange={handleFileUpload} />
-
           <MovieList movies={movieList} />
-
           {showSearch()}
+          {showSave()}
         </div>
       </form>
-
       <div className='movieResults'>
+        <h4>Movie Results</h4>
         <MovieResults movieRes={movies} handleDelete={handleDelete} />
+      </div>
+      <div className='searchedMovies'>
+        <h4>Searched Movies</h4>
+        <MovieResults movieRes={addedFromSearch} handleDelete={handleDeleteFromSearch} />
       </div>
     </div>
   );
