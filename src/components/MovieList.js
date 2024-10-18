@@ -5,7 +5,7 @@ const MovieList =  (props) => {
       <ul className="movieList">
         {props.movies.map((title, k) => (
             <li key={k}>
-              <input type='checkbox' id={`movie-${k}`} name={title} onChange={(e) => props.handleSelect(e)} defaultChecked />
+              <input type='checkbox' id={`movie-${k}`} name={title} defaultChecked />
               <label htmlFor={`movie-${k}`}>{title}</label>
             </li>
           ))}

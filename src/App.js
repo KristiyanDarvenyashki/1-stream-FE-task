@@ -64,7 +64,7 @@ function App() {
     console.log(fetchedMovieData);
   }
 
-  const showSearch = () => (searchBtn ? <input type='button' value='Search' onClick={handleSearch} /> : '')
+  const showSearch = () => (searchBtn ? <input type='submit' value='Search' onSubmit={handleSearch} /> : '')
 
   const handleFileUpload = (e) => {
     let reader = new FileReader();
@@ -80,16 +80,12 @@ function App() {
     }
   }
 
-  const handleSelect = (e) => {
-    const movieIndex = e.target.id.slice(6);
-    console.log(movieIndex);
-  }
-
-  const handleSearch = () => {
-    let movieSearch = movieList;
-    // const formData = new FormData(e.target);
-    // const data = formData.entries();
-    // for (const entry of data) movieSearch = [...movieSearch, entry[0]];
+  const handleSearch = (e) => {
+    e.preventDefault();
+    let movieSearch = [];
+    const formData = new FormData(e.target);
+    const data = formData.entries();
+    for (const entry of data) movieSearch = [...movieSearch, entry[0]];
 
     console.log(movieSearch);
     movieSearch.map((movieName) => getMovieData(movieName));
@@ -118,11 +114,11 @@ function App() {
     <div className="App">
       <MovieListHeading heading='Movies' />
       <SearchBox movieQuery={movieQuery} setMovieQuery={setMovieQuery} movieSuggest={movieSuggest} handleMovieSelect={handleMovieSelect} />
-      <form>
+      <form onSubmit={handleSearch}>
         <div className='movieListHolder'>    
           <input type="file" accept="text/txt" id="moviesTxt" onChange={handleFileUpload} />
 
-          <MovieList movies={movieList} handleSelect={handleSelect} />
+          <MovieList movies={movieList} />
 
           {showSearch()}
         </div>
