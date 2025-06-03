@@ -1,4 +1,4 @@
-This is a project task that was given to me see my knowledge and skills using React.
+This is a project task that was given to me to see my knowledge and skills using React.
 
 The task is as follows:
 
