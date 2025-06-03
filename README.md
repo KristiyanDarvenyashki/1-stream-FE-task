@@ -1,70 +1,16 @@
-# Getting Started with Create React App
+This is a project task that was given to me see my knowledge and skills using React.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The task is as follows:
 
-## Available Scripts
+Web form page with input for uploading a .txt file. The file contains movie titles – each movie is on a new row.
+After the file upload, the movie list is displayed on the page. Each movie has a corresponding checkbox (default checked), it’s possible to check or uncheck one or more of the titles. The idea is to filter out unwanted records.
 
-In the project directory, you can run:
+Under the list, there is a “Search” button. On click, information about the selected movie titles is fetched from the TMDB API.
 
-### `npm start`
+After this TMDB search, the received information is shown on a preview page in a list of “Movie Cards” or rows. There should be only one result per searched movie title. Each card/row should have a “Bin” icon to remove (filter out) wrong or unwanted search results.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The “Search” button should now be labeled “Save” and on click, the data of the selected movies is structured in a JSON and sent to a save endpoint. For the purposes of this task, the endpoint can be just a dummy address, in a real situation there will be working back-end code that will handle the save request.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+There is also an optional feature added:
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+When on the preview page (after fetching TMDB data), there is an input that the user can use to perform additional manual TMDB searches and fetch data for individual movies. While the user types the movie title, a dropdown with found results is shown under the input. When a suggested result is clicked – new movie card/row is added at the bottom of the preview page.
